@@ -69,11 +69,26 @@ ping www.baidu.com
 
 > i  --- insert
 >
-> esc + :wq  退出保存
+> 在 Vim 中，按下 `Esc` 键可以 switching to normal mode (退出输入模式)。
 >
-> 
+> 在 normal mode 中，可以使用以下命令退出 Vim：
+>
+> 1. 输入 `:q` 并按下 `Enter` 键可以保存修改并退出。
+> 2. 输入 `:q!` 并按下 `Enter` 键可以不保存修改并强制退出。
+> 3. 输入 `:wq` 并按下 `Enter` 键可以保存修改并退出。
+> 4. 输入 `:wq!` 并按下 `Enter` 键可以保存修改并强制退出。
+> 5. 输入 `:x` 并按下 `Enter` 键可以保存修改并退出。
+> 6. 输入 `:exit` 或 `:exi` 并按下 `Enter` 键可以保存修改并退出。
+> 7. 输入 `:exit!` 或 `:exi!` 并按下 `Enter` 键可以不保存修改并强制退出。
+>
+> 如果你忘记在什么模式下，可以尝试按下 `Esc` 键直到你回到 normal mode，然后再按下上述退出命令。
 
 ## 2.2 日常命令
+
+- 关机命令
+  - `sudo shutdown -h now`：该命令会立即关闭系统，并且会发送一个终端警告信息给已登录的用户，即将关闭系统。
+- 重启命令
+  - `sudo shutdown -r now`
 
 - 终端上下滑动
   - `shift + pageUp / pageDown`
