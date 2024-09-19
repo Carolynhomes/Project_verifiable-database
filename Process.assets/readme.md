@@ -1,0 +1,1 @@
+主要用来保存`environment_deployment_process`的图片
