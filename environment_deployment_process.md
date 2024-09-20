@@ -144,7 +144,15 @@ ping www.baidu.com
 
 ![image-20240918163116153](./Process.assets/image-20240918163116153.png)
 
-- 
+## 2.3 docker常用命令
+
+`sudo systemctl daemon-reload`
+
+- 它的作用是在你修改或新增了 `systemd` 的服务文件（如 `.service`、`.socket` 等）后，通知 `systemd` 守护进程重新加载这些配置文件，以便它们生效。
+
+`sudo systemctl restart docker`
+
+- 重启docker服务
 
 # 3. 安装项目所需依赖
 
@@ -166,6 +174,10 @@ ping www.baidu.com
 > - **`wget`**: 这是要安装的软件包的名称。`wget` 是一个常用的命令行工具，用于从网络下载文件。
 >
 > **命令 `sudo yum install wget` 的作用是通过 `yum` 包管理器安装 `wget` 工具，并且使用 `sudo` 提升权限以确保安装操作的成功。执行该命令后，系统会连接到相应的软件仓库，下载并安装 `wget` 及其依赖项。**
+
+出现如下错误：![image-20240918143842731](./environment_deployment_process.assets/image-20240918143842731.png)
+
+**解决方法**：`4.1`，然后安装成功
 
 ![安装wget成功](./Process.assets/image-20240918145320808.png)
 
@@ -250,11 +262,15 @@ sudo docker run hello-world
 
 ![ yum-utils安装完成](./Process.assets/image-20240918161914045.png)
 
-`sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo` 出现错误，看 `第四部分`
+`sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo` 出现错误，看 `4.2`
 
 ![sudo yum -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin完成](./Process.assets/image-20240918170921621.png)
 
-`sudo docker run hello-world`运行出错，看`4`
+`sudo docker run hello-world`运行出错，看`4.3部分`
+
+> [!important]
+>
+> 找到了一个镜像网站，`https://hub.atomgit.com/`，通过这个网站，找到需要的镜像，然后点击，进入然后敲命令即可。
 
 
 
@@ -308,10 +324,10 @@ sudo yum install wget
 从截图中可以看到，运行 `sudo docker run hello-world` 时，Docker 尝试从 `registry-1.docker.io` 拉取 `hello-world` 镜像，但由于连接超时，未能成功下载镜像。
 
 - ping 一下：ping registry-1.docker.io 不通
-- 
+- 尝试了各种公共源，阿里源等等，都不行
+- 我嘞个豆，真麻烦，总算搞定了
 
-# 5. 进度
+> [!IMPORTANT]
+>
+> 找到了一个镜像网站，`https://hub.atomgit.com/`，通过这个网站，找到需要的镜像，然后点击，进入然后敲命令即可。
 
-问了师兄（朱），说让我学一下**docker基础**，虽然我跟着这个安装到了最后一步
-
-![image-20240918185027810](./Process.assets/image-20240918185027810.png)
