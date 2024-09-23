@@ -1,18 +1,18 @@
-# 1. VirtualBox安装Linux
+#  VirtualBox安装Linux
 
-## 1.1. 设置个人信息
+##  设置个人信息
 
 用户名：user
 
 密码：1-8
 
-## 1.2. centos版本
+## centos版本
 
 `CentOS-7-x86_64-Minimal-2009.iso`
 
-## 1.3. 安装步骤
+## 安装步骤
 
-#### 1.3.1 新建虚拟电脑
+### 新建虚拟电脑
 
 ![image-20240918131853917](./Process.assets/image-20240918131853917.png)
 
@@ -28,7 +28,7 @@
 
 ![image-20240918132444088](./Process.assets/image-20240918132444088.png)
 
-#### 1.3.2 安装 CentOS 7
+### 安装 CentOS 7
 
 - 进入安装向导后设置语言：中文，时间：上海
 - 分区可以直接自动分区，也可以手动设置（自定义）
@@ -63,9 +63,9 @@ ping www.baidu.com
 
 
 
-# 2. 基础Linux命令
+# 基础Linux命令
 
-## 2.1 vim命令
+## vim命令
 
 > i  --- insert
 >
@@ -83,7 +83,37 @@ ping www.baidu.com
 >
 > 如果你忘记在什么模式下，可以尝试按下 `Esc` 键直到你回到 normal mode，然后再按下上述退出命令。
 
-## 2.2 日常命令
+##  日常命令
+
+- 查找某个文件夹的位置
+  - `find 起始目录 -type d -name "文件夹名"`
+  - 当前目录 `.` 或根目录 `/`。
+
+- 快速清理文件内容：
+  - `%d 回车`
+- 删除一行
+  - `ctrl+e` 光标移到最后
+  - `ctrl+u` 删除光标前面的
+
+- 查看版本号
+  - `**cat /etc/redhat-release**`
+
+- yum
+  - 检查是否安装了软件包
+    - `yum list installed | grep <软件包名称>`
+    - eg: `yum list installed | grep gcc`
+  - 检查yum是否可用  `yum list`
+  - yum源配置（阿里云）
+    - 安装`wget`: `yum install -y wget`
+    - 备份/etc/yum.repos.d/CentOS-Base.repo文件: `cd /etc/yum.repos.d/`; `mv CentOS-Base.repo CentOS-Base.repo.back`
+    - 下载阿里云的Centos-6.repo文件: `wget -O CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo`
+
+- 设置网络代理服务器
+  - `export http_proxy=http://代理服务器IP:端口号`
+  - `export https_proxy=http://代理服务器IP:端口号`
+- 取消代理
+  - `unset http_proxy`
+  - `unset https_proxy`
 
 - 关机命令
   - `sudo shutdown -h now`：该命令会立即关闭系统，并且会发送一个终端警告信息给已登录的用户，即将关闭系统。
@@ -101,10 +131,12 @@ ping www.baidu.com
 - ping停止方法
   - 用` ctrl+c`终止ping
 - 查看ip地址
-
-  - ip addr  一样
-
+  - `ip addr show`
+  
+  - ip addr  一样   `ip a`
+  
   - hostname -i  查看当前机器的ip地址
+  
 - 查看文件内容
   - cat filename
 - 查看文件目录有多少内容
@@ -115,6 +147,7 @@ ping www.baidu.com
 - 创建文件夹
   - `mkdir my_folder`：创建一个  my_folder 文件夹
   - `mkdir -p parent_folder/child_folder`：创建一个名为 `parent_folder` 的父文件夹以及其内部的 `child_folder`
+  - `-p` 选项确保父目录存在，如果目录已存在，则不会报错。
 - 终端显示上一屏内容
   - 执行命令的时候在后面加上`> result.txt`，这样就可把结果输出到文件，就方便查看和查找相应的内容了。所以推荐用这种方法。
 
@@ -137,14 +170,15 @@ ping www.baidu.com
     - "rm -i" 进行交互式删除，即删除时会提示确认。(i为interactive的意思)
     - "rm -r" 将参数中列出的全部目录和子目录进行递归删除。(r为recursive的意思)
     - "rm -v" 详细显示删除操作进行的步骤。(v为verbose的意思)
-
+  - `rm -r 目录名`:递归删除目录下的所有文件
+  
 - 查看yum源
   - `yum repolist`
 
 
 ![image-20240918163116153](./Process.assets/image-20240918163116153.png)
 
-## 2.3 docker常用命令
+## docker常用命令
 
 `sudo systemctl daemon-reload`
 
@@ -154,13 +188,13 @@ ping www.baidu.com
 
 - 重启docker服务
 
-# 3. 安装项目所需依赖
+#  安装项目所需依赖
 
 参考该链接：https://docs.chainmaker.org.cn/dev/%E5%8F%AF%E9%AA%8C%E8%AF%81%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BD%BF%E7%94%A8%E6%96%87%E6%A1%A3.html
 
-## 3.1 安装准备
+##  安装准备
 
-### 3.1.1 安装wget命令行工具
+###  安装wget命令行工具
 
 - 在进行部署前，先在Linux安装对应的工具
 
@@ -274,13 +308,218 @@ sudo docker run hello-world
 
 
 
-## 3.2 安装长安链v2.3.1
+## 安装长安链v2.3.1
+
+###  安装git
+
+`sudo yum install git`
+
+### 安装golang
+
+不需要再安装了，因为`3.1`已经安装过了
+
+不过刚开始检查是否安装go的时候，执行`go version`，出现 `command not found`命令
+
+但是最后 执行了一下`export PATH=$PATH:/usr/local/go/bin`，之后再`go version` 就没问题了
+
+`永久添加 Go 到 PATH 中`
+
+- 修改用户的 `.bashrc` 或 `.bash_profile` 文件
+
+1. 打开 `.bashrc` 或 `.bash_profile` 文件（根据使用的 shell 不同可能是 `.bashrc` 或 `.bash_profile`，如果是 zsh，使用 `.zshrc`）。
+
+   ```
+   vi ~/.bashrc
+   ```
+
+2. 在文件的末尾添加下面这行代码：
+
+   ```
+   export PATH=$PATH:/usr/local/go/bin
+   ```
+
+3. 保存文件并退出编辑器。
+
+4. 运行下面的命令使修改立即生效：
+
+   ```
+   source ~/.bashrc
+   ```
+
+### 安装gcc
+
+`sudo yum install centos-release-scl`
+
+![image-20240923102009427](./environment_deployment_process.assets/image-20240923102009427.png)
+
+`sudo yum install devtoolset-7-gcc*`
+
+显示没有软件包
+
+`scl enable devtoolset-7 bash`
+
+ 上面第二条第三条命令无法运行，换了好几个yum源都没办法。
+
+换了一种方法，最后实现图示结果：
+
+![image-20240923155930232](./environment_deployment_process.assets/image-20240923155930232.png)
+
+> 参考网址：https://www.xiehai.zone/2023-05-24-centos-gcc-glibc-upgrade.html
+
+#  环境搭建
+
+## 源码下载
+
+- 首先注册
+- 然后 下载`chainmaker-go`源码到本地
+  - `git clone -b v2.3.1 --depth=1 https://git.chainmaker.org.cn/chainmaker/chainmaker-go.git`
+
+![image-20240923171644400](./environment_deployment_process.assets/image-20240923171644400.png)
+
+- 下载`证书生成工具`源码到本地
+  - `git clone -b v2.3.0  --depth=1 https://git.chainmaker.org.cn/chainmaker/chainmaker-cryptogen.git`
+
+![image-20240923171751784](./environment_deployment_process.assets/image-20240923171751784.png)
+
+## 源码编译
+
+- 编译证书生成工具
+  - `cd chainmaker-cryptogen`
+  - `make`
+
+![make完成](./environment_deployment_process.assets/image-20240923172856633.png)
+
+## 配置文件生成
+
+- 将编译好的`chainmaker-cryptogen`，软连接到`chainmaker-go/tools`目录
+
+```
+# 进入工具目录
+$ cd chainmaker-go/tools
+
+# 软连接chainmaker-cryptogen到tools目录下
+$ ln -s ../../chainmaker-cryptogen/ .
+```
+
+![image-20240923174823066](./environment_deployment_process.assets/image-20240923174823066.png)
+
+### PermissionedWithCert
+
+原始的身份模式，即证书模式
+
+进入`chainmaker-go/scripts`目录，执行`prepare.sh`脚本生成单链4节点集群配置，存于路径`chainmaker-go/build`中
+
+> `prepare.sh`脚本支持生成`solo`模式节点证书和配置，以及4/7/10/13/16节点的证书和配置
 
 
 
-# 4. 安装依赖出现的错误
+- ` cd ../scripts` # 进入脚本目录
+- `./prepare.sh -h` # 查看脚本帮助
+- `./prepare.sh 4 1` # 生成单链4节点集群的证书和配置
+  - 一直回车即可
+- `tree -L 3 ../build/` # 查看生成好的节点证书和配置
+  - 要提前安装 tree: `yum -y install tree`
 
-## 4.1 安装 wget时出现下面错误
+![生成好的节点证书和配置](./environment_deployment_process.assets/image-20240923175303954.png)
+
+>- 关于自动生成的端口说明
+>
+>通过`prepare.sh`脚本生成的配置，默认是在单台服务器上部署，故自动生成的端口号，是从一个起始端口号开始依次递增，可以通过命令行参数修改起始端口号。
+>
+>主要有2个端口，`p2p`端口（用于节点互联）和`rpc`端口（用于客户端与节点通信），`p2p`起始端口为`11301`，`rpc`起始端口为`12301`。
+>
+>如果生成4个节点的配置，`p2p`端口分别为：`11301、11302、11303、11304`，`rpc`端口分别为：`12301、12302、12303、12304`
+>
+>如果是在多机部署，希望生成固定的端口号，请参考：[【多机部署】](https://docs.chainmaker.org.cn/v2.3.1/html/instructions/多机部署.html)
+
+
+
+## 编译及安装包制作
+
+- 生成证书（prepare.sh脚本）后执行`build_release.sh`脚本，将编译`chainmaker-go`模块，并打包生成安装，存于路径`chainmaker-go/build/release`中
+- `./build_release.sh`
+
+- `tree ../build/release/`
+
+![生成证书完成](./environment_deployment_process.assets/image-20240923184506457.png)
+
+## 启动节点集群
+
+- 执行`cluster_quick_start.sh`脚本，会解压各个安装包，调用`bin`目录中的`start.sh`脚本，启动`chainmaker`节点
+
+![image-20240923184609436](./environment_deployment_process.assets/image-20240923184609436.png)
+
+- 启动成功后，将*.tar.gz备份，以免下次启动再次解压缩时文件被覆盖
+- `mkdir -p ../build/bak`
+- `mv ../build/release/*.tar.gz ../build/bak`
+
+>若需要关闭集群，使用脚本：
+>
+>`./cluster_quick_stop.sh`
+
+## 查看节点启动使用正常
+
+- 查看进程是否存在`ps -ef|grep chainmaker | grep -v grep`
+
+![进程存在](./environment_deployment_process.assets/image-20240923184758491.png)
+
+- 查看端口是否监听 `netstat -lptn | grep 1230`
+
+  - 需要先安装`net-tools`:  `sudo yum install net-tools`
+
+  ![被监听](./environment_deployment_process.assets/image-20240923185048282.png)
+
+- 检查节点是否有`ERROR`日志
+
+  - `cat ../build/release/*/bin/panic.log`
+
+  - `cat ../build/release/*/log/system.log`
+
+  - `cat ../build/release/*/log/system.log |grep "ERROR\|put block\|all necessary"`
+
+  - ```
+    若看到all necessary peers connected则表示节点已经准备就绪。
+    ```
+
+![panic.log](./environment_deployment_process.assets/image-20240923185116507.png)
+
+![system.log](./environment_deployment_process.assets/image-20240923185138980.png)
+
+![所有节点准备就绪](./environment_deployment_process.assets/image-20240923185206674.png)
+
+# 使用CMC命令行工具部署、调用合约
+
+为了验证所搭建的链功能是否正常，可以通过`cmc`命令行工具来进行验证。
+
+## 编译&配置
+
+cmc工具的编译&运行方式如下：
+
+​	创建工作目录 $WORKDIR 比如 ~/chainmaker
+​	启动测试链 [在工作目录下 使用脚本搭建](https://docs.chainmaker.org.cn/v2.3.1/html/quickstart/通过命令行体验链.html#)
+
+```
+# 编译cmc
+$ cd $WORKDIR/chainmaker-go/tools/cmc
+$ go build
+# 配置测试数据
+$ cp -rf ../../build/crypto-config ../../tools/cmc/testdata/ # 使用chainmaker-cryptogen生成的测试链的证书
+# 查看help
+$ cd ../../chainmaker-go/tools/cmc
+$ ./cmc --help
+```
+
+
+
+
+
+
+
+# 安装依赖碰到的问题
+
+
+
+## 安装 wget时出现下面错误
 
 ![image-20240918143842731](./Process.assets/image-20240918143842731.png)
 
@@ -302,7 +541,7 @@ curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-
 sudo yum install wget
 ```
 
-## 4.2 添加yum软件源 
+##  添加yum软件源 
 
 运行`sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo`出现如下错误
 
@@ -317,7 +556,7 @@ sudo yum install wget
 
 ![问题解决](./Process.assets/image-20240918165149750.png)
 
-## 4.3 sudo docker run hello-world出错
+## sudo docker run hello-world出错
 
 ![image-20240919151757722](./Process.assets/image-20240919151757722.png)
 
@@ -330,4 +569,26 @@ sudo yum install wget
 > [!IMPORTANT]
 >
 > 找到了一个镜像网站，`https://hub.atomgit.com/`，通过这个网站，找到需要的镜像，然后点击，进入然后敲命令即可。
+
+## yum仓库无法使用
+
+`bash <(curl -sSL https://gitee.com/SuperManito/LinuxMirrors/raw/main/ChangeMirrors.sh)`
+
+然后`1，y, y, y, y, y`  即可
+
+然后查看  `yum repolist` 看软件包
+
+#  使用MobaXterm
+
+> [!important]
+>
+> 因为不能复制粘贴命令，也不能上下滑动，贼麻烦，于是使用之前用过的这个工具，很方便
+
+## 出现连接超时问题
+
+出现连接超时错误，此时需要到`virtualbox`中![image-20240923093710436](./environment_deployment_process.assets/image-20240923093710436.png)
+
+之后看一下自己虚拟机的ip地址，然后在`mobaXterm`建立新会话进行`ssh`连接就行了
+
+建立会话的时候，ip填写虚拟机的ip，username填写虚拟机的用户名，端口号默认即可
 
