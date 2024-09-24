@@ -94,7 +94,10 @@ ping www.baidu.com
 - 删除一行
   - `ctrl+e` 光标移到最后
   - `ctrl+u` 删除光标前面的
-
+  - 上面是个组合-----
+  - `ctrl+a `把光标移动到最前
+  - `ctrl+k`  光标处往后删除
+  
 - 查看版本号
   - `**cat /etc/redhat-release**`
 
@@ -495,8 +498,18 @@ $ ln -s ../../chainmaker-cryptogen/ .
 
 cmc工具的编译&运行方式如下：
 
-​	创建工作目录 $WORKDIR 比如 ~/chainmaker
+​	创建工作目录 $WORKDIR 比如 ~/chainmaker——我真的是，干扰我
 ​	启动测试链 [在工作目录下 使用脚本搭建](https://docs.chainmaker.org.cn/v2.3.1/html/quickstart/通过命令行体验链.html#)
+
+- 首先创建工作目录
+  - `mkdir -p ~/chainmaker` ——这个用不到
+  - `export WORKPATH=/root/gcc-10.1.0/build/chainmaker-go`  这种设置仅在当前终端会话中有效，关闭终端后会失效。
+  - 将`&WORKPATH`设置为永久生效
+    - `vi ~/.bashrc`
+    - 在文件末尾添加如下行：`export WORKDIR=/root/gcc-10.1.0/build/chainmaker-go`
+    - 保存文件并退出 `esc + :wq`
+    - 使更改立即生效：`source ~/.bashrc`
+    - 使用 `echo` 命令验证 `$WORKDIR` 是否已正确设置：`echo $WORKDIR`输出应该是 `/root/gcc-10.1.0/build/chainmaker-go`，表示设置成功。
 
 ```
 # 编译cmc
@@ -509,11 +522,159 @@ $ cd ../../chainmaker-go/tools/cmc
 $ ./cmc --help
 ```
 
+![go build图](./environment_deployment_process.assets/image-20240923192601913.png)
+
+![./cmc --help](./environment_deployment_process.assets/image-20240923192718392.png)
+
+## 部署示例合约
+
+- 创建`wasm合约`
+
+```bash
+$ ./cmc client contract user create \
+--contract-name=fact \
+--runtime-type=WASMER \
+--byte-code-path=./testdata/claim-wasm-demo/rust-fact-2.0.0.wasm \
+--version=1.0 \
+--sdk-conf-path=./testdata/sdk_config.yml \
+--admin-key-file-paths=./testdata/crypto-config/wx-org1.chainmaker.org/user/admin1/admin1.sign.key,./testdata/crypto-config/wx-org2.chainmaker.org/user/admin1/admin1.sign.key,./testdata/crypto-config/wx-org3.chainmaker.org/user/admin1/admin1.sign.key \
+--admin-crt-file-paths=./testdata/crypto-config/wx-org1.chainmaker.org/user/admin1/admin1.sign.crt,./testdata/crypto-config/wx-org2.chainmaker.org/user/admin1/admin1.sign.crt,./testdata/crypto-config/wx-org3.chainmaker.org/user/admin1/admin1.sign.crt \
+--sync-result=true \
+--params="{}"
+```
+
+![创建wasm合约](./environment_deployment_process.assets/image-20240923193148780.png)
+
+- 调用`wasm合约`
+
+  ```bash
+  $ ./cmc client contract user invoke \
+  --contract-name=fact \
+  --method=save \
+  --sdk-conf-path=./testdata/sdk_config.yml \
+  --params="{\"file_name\":\"name007\",\"file_hash\":\"ab3456df5799b87c77e7f88\",\"time\":\"6543234\"}" \
+  --sync-result=true
+  ```
+
+  ![调用wasm合约](./environment_deployment_process.assets/image-20240923193058490.png)
+
+- 查询合约
+
+  ```
+  $ ./cmc client contract user get \
+  --contract-name=fact \
+  --method=find_by_file_hash \
+  --sdk-conf-path=./testdata/sdk_config.yml \
+  --params="{\"file_hash\":\"ab3456df5799b87c77e7f88\"}"
+  ```
+
+![查询合约](./environment_deployment_process.assets/image-20240923193224796.png)
+
+## 查询链上数据
+
+查询链上`block`和`transaction `主要参数说明如下：
+
+```
+  --sdk-conf-path：指定cmc使用sdk的配置文件路径
+  --chain-id：指定链Id
+```
+
+- 根据区块高度查询链上未归档区块
+
+  ```bash
+  ./cmc query block-by-height [blockheight] \
+  --chain-id=chain1 \
+  --sdk-conf-path=./testdata/sdk_config.yml
+  
+  
+  # 我执行了 
+  ./cmc query block-by-height 2 \
+  --chain-id=chain1 \
+  --sdk-conf-path=./testdata/sdk_config.yml
+  ```
+
+  `里面的[blockheight]是占位符`
+
+  将 `[blockheight]` 替换为你想查询的实际区块高度的数值。例如，如果你想查询区块高度为 `100` 的区块
+
+  - `block-by-height` 后面的 `100` 是你要查询的区块高度。
+  - `--chain-id=chain1` 指定的是链 ID 为 `chain1`。
+  - `--sdk-conf-path=./testdata/sdk_config.yml` 指定 SDK 配置文件的路径。
+
+  确保你提供的区块高度是一个有效的正整数，如果你不确定区块高度，可以查询链上的最新区块高度后再进行查询。
+
+  ![image-20240923195116046](./environment_deployment_process.assets/image-20240923195116046.png)
+
+- 根据区块hash查询链上未归档区块
+
+  ```bash
+  ./cmc query block-by-hash [blockhash] \
+  --chain-id=chain1 \
+  --sdk-conf-path=./testdata/sdk_config.yml
+  ```
+
+  - **目的**：通过区块哈希查询特定区块的信息。
+
+  - **参数解释**：
+
+    - `[blockhash]`：需要替换为实际的区块哈希。
+
+    - `--chain-id=chain1`：指定要查询的链的 ID 为 `chain1`。
+
+    - `--sdk-conf-path=./testdata/sdk_config.yml`：指定 SDK 配置文件路径，以便与链节点正确通信。
 
 
 
+- 根据txid查询链上未归档区块
+
+  ```bash
+  ./cmc query block-by-txid [txid] \
+  --chain-id=chain1 \
+  --sdk-conf-path=./testdata/sdk_config.yml
+  ```
+
+  - **目的**：根据给定的交易 ID 来查询包含该交易的区块。
+
+  - 参数分析：
+    - `[txid]`：需要替换为实际的交易 ID（如 `abcd1234efgh5678ijkl9012`）。
+    - `--chain-id=chain1`：指定了链的 ID，查询的是 `chain1` 上的区块。
+    - `--sdk-conf-path=./testdata/sdk_config.yml`：指定 SDK 配置文件路径，用于与链节点通信。
+
+​		要确保提供有效的 `txid` 和正确的 SDK 配置路径，否则命令会执行失败。如果你不确定交易 ID 或链的配置，可以查看相关文档或者项目的具体使用说明。
 
 
+
+- 根据txid查询链上未归档tx
+
+  ```bash
+  ./cmc query tx [txid] \
+  --chain-id=chain1 \
+  --sdk-conf-path=./testdata/sdk_config.yml
+  ```
+
+  - **目的**：根据给定的交易 ID（`txid`）查询该交易的详细信息。
+
+  - 参数分析：
+    - `[txid]`：需要替换为实际的交易 ID（如 `abcd1234efgh5678ijkl9012`）。
+    - `--chain-id=chain1`：指定链的 ID，查询的是 `chain1` 链上的交易。
+    - `--sdk-conf-path=./testdata/sdk_config.yml`：指定 SDK 配置文件路径，用于与链节点通信。
+
+​	该命令用于查询某个具体交易的详细信息，而非区块信息。
+
+
+
+## 查询链配置
+
+```bash
+./cmc client chainconfig query \
+--sdk-conf-path=./testdata/sdk_config.yml
+```
+
+![image-20240923201828335](./environment_deployment_process.assets/image-20240923201828335.png)
+
+## [长安链部署目录说明](https://docs.chainmaker.org.cn/v2.3.1/html/quickstart/通过命令行体验链.html#id18)
+
+此目录为使用： `chainmaker-go/scripts/cluster_quick_start.sh`启动后的的目录结构说明。
 
 # 安装依赖碰到的问题
 
